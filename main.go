@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+)
 
+// main.go
+type InMemoryPlayerStore struct{}
+
+func (i *InMemoryPlayerStore) GetPlayersScore(name string) int {
+	return 123
+}
 func main() {
-	fmt.Print("Hello world")
+	server := &PlayerServer{&InMemoryPlayerStore{}}
+	log.Fatal(http.ListenAndServe(":5000", server))
 }

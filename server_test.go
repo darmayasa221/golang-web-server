@@ -7,26 +7,40 @@ import (
 	"testing"
 )
 
-func TestGETPlayers(t *testing.T) {
-	server := &PlayerServer{}
+// server_test.go
+type StubPlayerStore struct {
+	scores map[string]int
+}
 
-	t.Run("Return Papper's score", func(t *testing.T) {
-		// Assert
-		request := newGetScoreRequest("Paper")
+func (s *StubPlayerStore) GetPlayersScore(name string) int {
+	score := s.scores[name]
+	return score
+}
+func TestGETPlayers(t *testing.T) {
+	store := StubPlayerStore{
+		map[string]int{
+			"Pepper": 20,
+			"Floyd":  10,
+		},
+	}
+	server := &PlayerServer{&store}
+
+	t.Run("returns Pepper's score", func(t *testing.T) {
+		request := newGetScoreRequest("Pepper")
 		response := httptest.NewRecorder()
-		// Action & Assert
-		server.ServerHTTP(response, request)
-		assertResponsesBody(t, response.Body.String(), "20")
+
+		server.ServeHTTP(response, request)
+
+		assertResponseBody(t, response.Body.String(), "20")
 	})
 
-	t.Run("return Floyd's score", func(t *testing.T) {
-		// Assert
+	t.Run("returns Floyd's score", func(t *testing.T) {
 		request := newGetScoreRequest("Floyd")
 		response := httptest.NewRecorder()
 
-		// Action & Assert
-		server.ServerHTTP(response, request)
-		assertResponsesBody(t, response.Body.String(), "10")
+		server.ServeHTTP(response, request)
+
+		assertResponseBody(t, response.Body.String(), "10")
 	})
 }
 
@@ -37,7 +51,7 @@ func newGetScoreRequest(name string) *http.Request {
 	return req
 }
 
-func assertResponsesBody(t testing.TB, got, want string) {
+func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got %q want %q", got, want)

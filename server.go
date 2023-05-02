@@ -7,16 +7,16 @@ import (
 )
 
 type PlayerStore interface {
-	GetPlayersScore(name *string) int
+	GetPlayersScore(name string) int
 }
 
 type PlayerServer struct {
 	store PlayerStore
 }
 
-func (p *PlayerServer) ServerHTTP(w http.ResponseWriter, r *http.Request) {
+func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	player := strings.TrimPrefix(r.URL.Path, "/players/")
-	fmt.Fprint(w, p.store.GetPlayersScore(&player))
+	fmt.Fprint(w, p.store.GetPlayersScore(player))
 }
 
 // func PlayerServer(w http.ResponseWriter, r *http.Request) {
@@ -24,11 +24,11 @@ func (p *PlayerServer) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 // 	fmt.Fprint(w, GetPlayersScore(&player))
 // }
 
-// func GetPlayersScore(name *string) string {
-// 	if *name == "Paper" {
+// func GetPlayersScore(name string) string {
+// 	if name == "Paper" {
 // 		return "20"
 // 	}
-// 	if *name == "Floyd" {
+// 	if name == "Floyd" {
 // 		return "10"
 // 	}
 // 	return ""
