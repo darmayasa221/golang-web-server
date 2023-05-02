@@ -26,7 +26,7 @@ func TestGETPlayers(t *testing.T) {
 
 	t.Run("return Floyd's score", func(t *testing.T) {
 		// Assert
-		request, _ := http.NewRequest(http.MethodGet, "/palyers/Floyd", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/players/Floyd", nil)
 		response := httptest.NewRecorder()
 
 		// Action
