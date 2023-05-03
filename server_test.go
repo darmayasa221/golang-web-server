@@ -26,34 +26,30 @@ func TestGETPlayers(t *testing.T) {
 	server := &PlayerServer{&store}
 
 	t.Run("returns Pepper's score", func(t *testing.T) {
+		// Arrange
 		request := newGetScoreRequest("Pepper")
 		response := httptest.NewRecorder()
-
+		// Acction & Assert
 		server.ServeHTTP(response, request)
-
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "20")
 	})
 
 	t.Run("returns 404 on missing players", func(t *testing.T) {
+		// Arrange
 		request := newGetScoreRequest("Appolo")
 		response := httptest.NewRecorder()
-
+		// Assert & Action
 		server.ServeHTTP(response, request)
-
-		got := response.Code
-		want := http.StatusNotFound
-
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
-
+		assertStatus(t, response.Code, http.StatusNotFound)
 	})
 	t.Run("returns Floyd's score", func(t *testing.T) {
+		// Arrange
 		request := newGetScoreRequest("Floyd")
 		response := httptest.NewRecorder()
-
+		// Asseert & Action
 		server.ServeHTTP(response, request)
-
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "10")
 	})
 }
@@ -69,5 +65,12 @@ func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got %q want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("did not get correct status, got %d, want %d", got, want)
 	}
 }
